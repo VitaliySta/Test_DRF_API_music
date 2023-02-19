@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+
+  web:
+    build: ./music/
+    command: gunicorn music.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./music/:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+
+volumes:
+  postgres_data:
